@@ -6,6 +6,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import WebDriverException
 import time
 
 mydriver = webdriver.Firefox()
@@ -36,21 +37,23 @@ print "opened msgs"
 try:
 	wait = WebDriverWait(mydriver, 500)
 	element10 = wait.until(EC.presence_of_element_located((By.ID,"wmMasterViewThreadlist")))
-	print element10.text
+	#print element10.text
 	print "for loop for li elements begins"
 	for str10 in element10.find_elements_by_tag_name("li"):
 		#print str10.text
-		
 		element12 = (str10.find_element_by_xpath("//div/a")).get_attribute("href")
-		
 		print "element12=" + element12
-		str10.click()
-		#element12.click()
+		try:
+			str10.click()
+		except WebDriverException:
+			print "keep going after fucking exception also"
+		time.sleep(10)
 	
 		try:
 			wait = WebDriverWait(mydriver, 500)
 			elem = wait.until(EC.presence_of_element_located((By.ID,'webMessengerRecentMessages')))
-			elem1 = elem.find_elements_by_tag_name("li")
+			elem1 = wait.until(EC.presence_of_all_elements_located((By.TAG_NAME,"li")))
+			#elem1 = elem.find_elements_by_tag_name("li")
 			for str1 in elem1:
 				try:
 					str2 = str1.find_element_by_class_name("timestamp")
